@@ -12,17 +12,18 @@ Route::get('/', [HomeController::class, "show"] );
 
 Route::controller(PostsController::class)->group(function(){
     
-    Route::get('posts/create', "create");
-    Route::get('posts/{post}', "show");
-    Route::post('posts', "store");
-    Route::get('posts/{post}/edit', "edit");
-    Route::patch('posts/{post}', "update");
-    Route::delete('posts/{post}', "destroy");
-
+    Route::middleware('auth')->group(function() {
+        Route::get('posts/create', "create");
+        Route::post('posts', "store");
+        Route::get('posts/{post}/edit', "edit");
+        Route::patch('posts/{post}', "update");
+        Route::delete('posts/{post}', "destroy");
+    });
+        Route::get('posts/{post}', "show");
 });
-
-
-Route::post('/posts/{post}/comments', [CommentsController::class, 'store']);
+                   
+Route::middleware('forbidden.words')
+    ->post('/posts/{post}/comments', [CommentsController::class, 'store']);
 
 
 Route::get('/dashboard', function () {
